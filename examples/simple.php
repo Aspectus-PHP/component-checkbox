@@ -83,6 +83,4 @@ $mainComponent = new class($xterm, $checkbox) implements Component
 };
 
 (new Aspectus($xterm, $mainComponent, handleInput: true))
-    // identifier (2nd argument) does not matter here
-    ->repeat(1, 'per-second')
     ->start();

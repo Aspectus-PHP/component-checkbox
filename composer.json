@@ -1,5 +1,5 @@
 {
-    "name": "aspectus/checkbox",
+    "name": "aspectus/component-checkbox",
     "description": "A checkbox component",
     "type": "library",
     "require": {

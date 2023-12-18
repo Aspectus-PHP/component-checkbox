@@ -2,9 +2,8 @@
 
 use Aspectus\Aspectus;
 use Aspectus\Component;
-use Aspectus\Components\Input\Checkbox\Checkbox;
+use Aspectus\Components\Input\Checkbox;
 use Aspectus\Message;
-use Aspectus\Terminal\TerminalDevice;
 use Aspectus\Terminal\Xterm;
 
 require_once \dirname(__DIR__) . '/vendor/autoload.php';

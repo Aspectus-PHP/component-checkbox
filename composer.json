@@ -11,7 +11,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Aspectus\\Components\\Input\\Checkbox\\": "src/"
+            "Aspectus\\Components\\Input\\": "src/"
         }
     },
     "authors": [

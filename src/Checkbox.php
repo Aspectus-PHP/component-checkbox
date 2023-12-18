@@ -1,6 +1,6 @@
 <?php
 
-namespace Aspectus\Components\Input\Checkbox;
+namespace Aspectus\Components\Input;
 
 use Aspectus\Component;
 use Aspectus\Message;

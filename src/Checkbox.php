@@ -28,6 +28,16 @@ class Checkbox implements Component
         $this->checked = !$this->checked;
     }
 
+    public function checked(): void
+    {
+        $this->checked = true;
+    }
+
+    public function unchecked(): void
+    {
+        $this->checked = false;
+    }
+
     public function view(): string
     {
         return $this->xterm

@@ -1,0 +1,23 @@
+{
+    "name": "aspectus/checkbox",
+    "description": "A checkbox component",
+    "type": "library",
+    "require": {
+        "aspectus/aspectus": "^0.1.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Aspectus\\Components\\Input\\Checkbox\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "thgs",
+            "email": "theogpl57@gmail.com"
+        }
+    ]
+}

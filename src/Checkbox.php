@@ -3,11 +3,17 @@
 namespace Aspectus\Components\Input;
 
 use Aspectus\Component;
+use Aspectus\Components\Input\View\CheckboxView;
 use Aspectus\Message;
 
 class Checkbox implements Component
 {
     private bool $checked = false;
+
+    public function __construct(
+        private $view = new CheckboxView()
+    ) {
+    }
 
     public function isChecked(): bool
     {
@@ -21,7 +27,7 @@ class Checkbox implements Component
 
     public function view(): string
     {
-        return '[' . ($this->checked ? '*' : ' ') .  ']';
+        return $this->view->render($this->checked);
     }
 
     public function update(?Message $message): ?Message

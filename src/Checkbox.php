@@ -5,13 +5,16 @@ namespace Aspectus\Components\Input;
 use Aspectus\Component;
 use Aspectus\Components\Input\View\CheckboxView;
 use Aspectus\Message;
+use Aspectus\Terminal\Xterm;
 
 class Checkbox implements Component
 {
     private bool $checked = false;
 
     public function __construct(
-        private $view = new CheckboxView()
+        private Xterm $xterm,
+        private CheckboxView $view,
+        private string $toggleKey = '<SPACE>'
     ) {
     }
 
@@ -27,11 +30,35 @@ class Checkbox implements Component
 
     public function view(): string
     {
-        return $this->view->render($this->checked);
+        return $this->xterm
+            ->moveCursorTo($this->view->y, $this->view->x)
+            ->write($this->view->render($this->checked))
+            ->getBuffered();
     }
 
     public function update(?Message $message): ?Message
     {
+        return match ($message->type) {
+            Message::KEY_PRESS, Message::MOUSE_INPUT => $this->handleInput($message),
+            default => null
+        };
+    }
+
+    private function handleInput(Message $message): ?Message
+    {
+        if ($message->type === Message::KEY_PRESS && $message['key'] === '<SPACE>') {
+            $this->toggle();
+            return null;
+        }
+
+        if ($message->type === Message::MOUSE_INPUT) {
+            /** @var Xterm\Event\MouseInputEvent $event */
+            $event = $message['event'];
+            if ($event->y === $this->view->y && !$event->released()) {
+                $this->toggle();
+            }
+        }
+
         return null;
     }
 }

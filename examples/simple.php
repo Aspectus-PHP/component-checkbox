@@ -11,15 +11,18 @@ require_once \dirname(__DIR__) . '/vendor/autoload.php';
 
 exec(command: 'stty -echo -icanon min 1 time 0 < /dev/tty', result_code: $resultCode);
 
+$xterm = new Xterm();
 $checkbox = new Checkbox(
+    $xterm,
     new CheckboxView(
+        y: 13,
+        x: 5,
         left: '-=[ ',
         right: ' ]=-',
         caption: ' This is an togglable checkbox!'
     )
 );
 
-$xterm = new Xterm();
 $mainComponent = new class($xterm, $checkbox) implements Component
 {
     public function __construct(private Xterm $xterm, private Checkbox $checkbox)
@@ -34,7 +37,6 @@ $mainComponent = new class($xterm, $checkbox) implements Component
             ->blink()
             ->write('Press spacebar to toggle checkbox, Q to quit!')
             ->normal()
-            ->moveCursorTo(13, 5)
             ->write($this->checkbox->view())
             ->getBuffered();
     }
@@ -44,8 +46,9 @@ $mainComponent = new class($xterm, $checkbox) implements Component
         return match($message->type) {
             Message::KEY_PRESS => match (strtolower($message['key'])) {
                 'q' => Message::quit(),
-                default => $this->handleOtherKey($message['key']),
+                default => $this->checkbox->update($message),
             },
+            Message::MOUSE_INPUT => $this->checkbox->update($message),
             Message::INIT => $this->handleInit(),
             Message::TERMINATE => $this->handleTerminate(),
             default => null
@@ -57,6 +60,7 @@ $mainComponent = new class($xterm, $checkbox) implements Component
         $this->xterm
             ->saveCursorAndEnterAlternateScreenBuffer()
             ->hideCursor()
+            ->setPrivateModeTrackMouseOnPressAndRelease()
             ->flush();
 
         return null;
@@ -67,20 +71,13 @@ $mainComponent = new class($xterm, $checkbox) implements Component
         $this->xterm
             ->restoreCursorAndEnterNormalScreenBuffer()
             ->showCursor()
+            ->unsetPrivateModeTrackMouseOnPressAndRelease()
             ->flush()
         ;
 
         return null;
     }
-
-    private function handleOtherKey(string $key): ?Message
-    {
-        if ($key === '<SPACE>') {
-            $this->checkbox->toggle();
-        }
-        return null;
-    }
 };
 
-(new Aspectus($xterm, $mainComponent, handleInput: true))
+(new Aspectus($xterm, $mainComponent, handleInput: true, handleMouseInput: true))
     ->start();

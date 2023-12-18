@@ -5,6 +5,8 @@ namespace Aspectus\Components\Input\View;
 final class CheckboxView
 {
     public function __construct(
+        readonly public int $y,
+        readonly public int $x,
         readonly public string $left = '[',
         readonly public string $checked = '*',
         readonly public string $unchecked = ' ',

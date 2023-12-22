@@ -1,7 +1,7 @@
 <?php
 
 use Aspectus\Aspectus;
-use Aspectus\Component;
+use Aspectus\Components\Basic\DefaultMainComponent;
 use Aspectus\Components\Input\Checkbox;
 use Aspectus\Components\Input\View\CheckboxView;
 use Aspectus\Message;
@@ -23,10 +23,13 @@ $checkbox = new Checkbox(
     )
 );
 
-$mainComponent = new class($xterm, $checkbox) implements Component
+$mainComponent = new class($xterm, $checkbox) extends DefaultMainComponent
 {
-    public function __construct(private Xterm $xterm, private Checkbox $checkbox)
-    {
+    public function __construct(
+        protected Xterm $xterm,
+        private Checkbox $checkbox
+    ) {
+        parent::__construct($this->xterm);
     }
 
     public function view(): string
@@ -49,33 +52,20 @@ $mainComponent = new class($xterm, $checkbox) implements Component
                 default => $this->checkbox->update($message),
             },
             Message::MOUSE_INPUT => $this->checkbox->update($message),
-            Message::INIT => $this->handleInit(),
-            Message::TERMINATE => $this->handleTerminate(),
-            default => null
+            default => parent::update($message)
         };
     }
 
-    private function handleInit(): ?Message
+    protected function onInit(Aspectus $aspectus): ?Message
     {
-        $this->xterm
-            ->saveCursorAndEnterAlternateScreenBuffer()
-            ->hideCursor()
-            ->setPrivateModeTrackMouseOnPressAndRelease()
-            ->flush();
-
-        return null;
+        $this->xterm->setPrivateModeTrackMouseOnPressAndRelease();
+        return parent::onInit($aspectus);
     }
 
-    private function handleTerminate(): ?Message
+    protected function onTerminate(Aspectus $aspectus): ?Message
     {
-        $this->xterm
-            ->restoreCursorAndEnterNormalScreenBuffer()
-            ->showCursor()
-            ->unsetPrivateModeTrackMouseOnPressAndRelease()
-            ->flush()
-        ;
-
-        return null;
+        $this->xterm->unsetPrivateModeTrackMouseOnPressAndRelease();
+        return parent::onTerminate($aspectus);
     }
 };
 

@@ -48,7 +48,7 @@ class Checkbox implements Component
 
     public function update(?Message $message): ?Message
     {
-        return match ($message->type) {
+        return match ($message?->type) {
             Message::KEY_PRESS, Message::MOUSE_INPUT => $this->handleInput($message),
             default => null
         };
